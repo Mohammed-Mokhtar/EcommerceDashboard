@@ -48,6 +48,7 @@ export default function Register() {
     <div>
       {/* heloo from the othe side  */}
       {/* heelo again */}
+      {/* mohamed mokhtar */}
       <Toaster position="top-center" reverseOrder={false} />
       <main className="">
         <section className="bg-gray-50 dark:bg-gray-900">
