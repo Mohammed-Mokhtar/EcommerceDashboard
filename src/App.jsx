@@ -7,8 +7,10 @@ import Categories from "./components/Categories/Categories";
 import SubCategories from "./components/SubCategories/SubCategories";
 import Brands from "./components/Brands/Brands";
 import Products from "./components/Products/Products";
+import CategoryDetails from "./components/Products/CategoryDetails";
 import Coupons from "./components/Coupons/Coupons";
 import Orders from "./components/Orders/Orders";
+import SubCategoryDetails from "./components/Products/SubCategoryDetails";
 
 import "../node_modules/flowbite/dist/flowbite.min.js";
 
@@ -32,6 +34,8 @@ let routes = createBrowserRouter([
       { path: "subcategories", element: <SubCategories /> },
       { path: "brands", element: <Brands /> },
       { path: "products", element: <Products /> },
+      { path: "products/:id", element: <CategoryDetails /> },
+      { path: "products/subcategory/:id", element: <SubCategoryDetails /> },
       { path: "coupons", element: <Coupons /> },
       { path: "orders", element: <Orders /> },
     ],
