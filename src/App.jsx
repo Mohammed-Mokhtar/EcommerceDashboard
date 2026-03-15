@@ -8,11 +8,12 @@ import SubCategories from "./components/SubCategories/SubCategories";
 import Brands from "./components/Brands/Brands";
 import Products from "./components/Products/Products";
 import CategoryDetails from "./components/Products/CategoryDetails";
+import SubCategoryDetails from "./components/Products/SubCategoryDetails";
 import Coupons from "./components/Coupons/Coupons";
 import Orders from "./components/Orders/Orders";
-import SubCategoryDetails from "./components/Products/SubCategoryDetails";
 
 import "../node_modules/flowbite/dist/flowbite.min.js";
+import "../node_modules/@fortawesome/fontawesome-free/css/all.min.css";
 
 let routes = createBrowserRouter([
   {
@@ -20,17 +21,17 @@ let routes = createBrowserRouter([
     element: <AuthLayout />,
     children: [
       {
-        path: "login",
+        path: "",
         element: <Login />,
       },
-      { index: true, element: <Register /> },
+      { path: "register", element: <Register /> },
     ],
   },
   {
     path: "/",
     element: <BlankLayout />,
     children: [
-      { index: true, element: <Categories /> },
+      { path: "categories", element: <Categories /> },
       { path: "subcategories", element: <SubCategories /> },
       { path: "brands", element: <Brands /> },
       { path: "products", element: <Products /> },

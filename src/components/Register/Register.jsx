@@ -1,9 +1,10 @@
 import { useForm } from "react-hook-form";
-import z from "zod";
+import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
+import { useState } from "react";
 
 let schema = z.object({
   name: z
@@ -20,6 +21,8 @@ let schema = z.object({
 });
 
 export default function Register() {
+  const [isLoading, setIsLoading] = useState(false);
+
   let { handleSubmit, register, formState } = useForm({
     defaultValues: {
       name: "",
@@ -29,27 +32,37 @@ export default function Register() {
     resolver: zodResolver(schema),
   });
 
+  const navigate = useNavigate();
+
   const doRegister = function (data) {
+    setIsLoading(true);
     const registerPromise = axios.post(
       "https://nti-ecommerce.vercel.app/api/v1/auth/signUp",
       data,
     );
-
     toast.promise(registerPromise, {
       loading: "Creating account...",
-      success: <b>Account created successfully!</b>,
-      error: (err) => (
-        <b>{err.response?.data?.message || "Registration failed"}</b>
-      ),
+      success: (res) => {
+        setTimeout(() => {
+          navigate("/");
+        }, 2000);
+        localStorage.setItem("token", res.data.token);
+        return <b>Account created successfully!</b>;
+      },
+      error: (err) => <b>{err.response.data.err}</b>,
+    });
+
+    registerPromise.finally(() => {
+      setIsLoading(false);
     });
   };
 
   return (
     <div>
       <Toaster position="top-center" reverseOrder={false} />
-      <main className="">
-        <section className="bg-gray-50 dark:bg-gray-900">
-          <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+      <main>
+        <section className="bg-gray-50 dark:bg-gray-900 min-h-screen">
+          <div className="flex min-h-screen flex-col items-center justify-start px-6 py-8 mx-auto lg:justify-center lg:py-0">
             <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
               <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
                 <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
@@ -125,14 +138,22 @@ export default function Register() {
 
                   <button
                     type="submit"
-                    className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 cursor-pointer"
+                    className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+                    disabled={isLoading}
                   >
-                    Create an account
+                    {isLoading ? (
+                      <>
+                        Creating account ...{" "}
+                        <i className="fa fa-spin fa-spinner"></i>
+                      </>
+                    ) : (
+                      "create account"
+                    )}
                   </button>
                   <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                     Already have an account?{" "}
                     <Link
-                      to="login"
+                      to="/"
                       className="font-medium text-blue-600 hover:underline dark:text-blue-500"
                     >
                       Login here
