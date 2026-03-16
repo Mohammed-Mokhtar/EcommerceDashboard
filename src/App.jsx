@@ -11,6 +11,8 @@ import CategoryDetails from "./components/Products/CategoryDetails";
 import SubCategoryDetails from "./components/Products/SubCategoryDetails";
 import Coupons from "./components/Coupons/Coupons";
 import Orders from "./components/Orders/Orders";
+import UserAccount from "./components/userAccount/userAccount";
+import UserGuest from "./components/userGuest/userGuest.jsx";
 
 import "../node_modules/flowbite/dist/flowbite.min.js";
 import "../node_modules/@fortawesome/fontawesome-free/css/all.min.css";
@@ -18,27 +20,66 @@ import "../node_modules/@fortawesome/fontawesome-free/css/all.min.css";
 let routes = createBrowserRouter([
   {
     path: "/",
-    element: <AuthLayout />,
+    element: (
+      <UserGuest>
+        <AuthLayout />
+      </UserGuest>
+    ),
     children: [
       {
         path: "",
         element: <Login />,
       },
-      { path: "register", element: <Register /> },
+      {
+        path: "login",
+        element: <Login />,
+      },
+      {
+        path: "register",
+        element: <Register />,
+      },
     ],
   },
   {
     path: "/",
-    element: <BlankLayout />,
+    element: (
+      <UserAccount>
+        <BlankLayout />
+      </UserAccount>
+    ),
     children: [
-      { path: "categories", element: <Categories /> },
-      { path: "subcategories", element: <SubCategories /> },
-      { path: "brands", element: <Brands /> },
-      { path: "products", element: <Products /> },
-      { path: "products/:id", element: <CategoryDetails /> },
-      { path: "products/subcategory/:id", element: <SubCategoryDetails /> },
-      { path: "coupons", element: <Coupons /> },
-      { path: "orders", element: <Orders /> },
+      {
+        path: "categories",
+        element: <Categories />,
+      },
+      {
+        path: "subcategories",
+        element: <SubCategories />,
+      },
+      {
+        path: "brands",
+        element: <Brands />,
+      },
+      {
+        path: "products",
+        element: <Products />,
+      },
+      {
+        path: "products/:id",
+        element: <CategoryDetails />,
+      },
+      {
+        path: "subcategory",
+        element: <SubCategories />,
+      },
+      {
+        path: "coupons",
+        element: <Coupons />,
+      },
+      {
+        path: "orders",
+        element: <Orders />,
+      },
     ],
   },
 ]);
