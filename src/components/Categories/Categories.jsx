@@ -4,6 +4,7 @@ import { initFlowbite } from "flowbite";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function Categories() {
   const [categories, setCategories] = useState([]);
@@ -17,6 +18,7 @@ export default function Categories() {
       .string()
       .min(3, "name minimum length is 3 characters")
       .max(30, "name maximum length is 30 characters"),
+    image: z.any().optional(),
   });
 
   const {
@@ -50,30 +52,30 @@ export default function Categories() {
     axios
       .get("https://nti-ecommerce.vercel.app/api/v1/categories")
       .then((res) => {
-        console.log(res);
         setCategories(res.data.categories);
       })
       .catch((err) => {
-        console.log(err.response.data.err);
+        toast.error(err.response?.data?.err || err.message);
       });
   };
 
   const handleAddCategory = (data) => {
     let formData = new FormData();
     formData.append("name", data.name);
-    if (data.image?.[0]) {
+    console.log(data.image);
+    if (data.image && data.image[0]) {
       formData.append("image", data.image[0]);
     }
 
     axios
       .post("https://nti-ecommerce.vercel.app/api/v1/categories", formData)
-      .then((res) => {
+      .then(() => {
         getAllCategories();
+        toast.success("Category added successfully");
         resetAddForm();
-        setcategory;
       })
       .catch((err) => {
-        console.log(err.response.data.err);
+        toast.error(err.response?.data?.err || err.message);
       });
   };
 
@@ -82,14 +84,14 @@ export default function Categories() {
       .delete(
         `https://nti-ecommerce.vercel.app/api/v1/categories/${categoryDeleteId}`,
       )
-      .then((res) => {
-        console.log(res);
+      .then(() => {
         setIsDeleteModalOpen(false);
         getAllCategories();
         setCategoryDeleteId(null);
+        toast.success("Category deleted successfully");
       })
       .catch((err) => {
-        console.log(err.response.data.err);
+        toast.error(err.response?.data?.err || err.message);
       });
   };
 
@@ -118,9 +120,10 @@ export default function Categories() {
         setCategoryEditId(null);
         resetEditForm();
         getAllCategories();
+        toast.success("Category updated successfully");
       })
       .catch((err) => {
-        console.log(err.response?.data?.err);
+        toast.error(err.response?.data?.err || err.message);
       });
   };
 
@@ -131,6 +134,7 @@ export default function Categories() {
 
   return (
     <>
+      <Toaster position="top-center" reverseOrder={false} />
       {/* delete modal */}
       <div
         id="deleteModal"
@@ -195,7 +199,7 @@ export default function Categories() {
           </div>
         </div>
         <div
-          className="absolute top-0 left-0 bg-gray-900/80 w-full h-full -p10"
+          className="absolute top-0 left-0 bg-gray-900/80 w-full h-full -p10 -z-10"
           onClick={() => setIsDeleteModalOpen(false)}
         ></div>
       </div>
