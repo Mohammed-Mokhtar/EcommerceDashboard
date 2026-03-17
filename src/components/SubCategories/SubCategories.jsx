@@ -99,7 +99,6 @@ export default function SubCategories() {
 
   const handleEditSubCategory = (data) => {
     if (!subCategoryEditId) return;
-    console.log(data);
     axios
       .put(
         `https://nti-ecommerce.vercel.app/api/v1/subCategories/${subCategoryEditId}`,

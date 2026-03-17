@@ -52,17 +52,17 @@ export default function Categories() {
     axios
       .get("https://nti-ecommerce.vercel.app/api/v1/categories")
       .then((res) => {
-        setCategories(res.data.categories);
+        setCategories(res.data.categories || []);
       })
       .catch((err) => {
         toast.error(err.response?.data?.err || err.message);
+        setCategories([]);
       });
   };
 
   const handleAddCategory = (data) => {
     let formData = new FormData();
     formData.append("name", data.name);
-    console.log(data.image);
     if (data.image && data.image[0]) {
       formData.append("image", data.image[0]);
     }
@@ -528,7 +528,7 @@ export default function Categories() {
               </tr>
             </thead>
             <tbody>
-              {categories.map((category) => {
+              {(categories || []).map((category) => {
                 return (
                   <tr
                     key={category._id}

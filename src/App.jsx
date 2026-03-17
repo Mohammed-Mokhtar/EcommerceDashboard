@@ -6,12 +6,14 @@ import BlankLayout from "./components/BlankLayout/BlankLayout";
 import Categories from "./components/Categories/Categories";
 import SubCategories from "./components/SubCategories/SubCategories";
 import Brands from "./components/Brands/Brands";
+import BrandDetails from "./components/Brands/BrandDetails";
 import Products from "./components/Products/Products";
-import CategoryDetails from "./components/Products/CategoryDetails";
-import SubCategoryDetails from "./components/Products/SubCategoryDetails";
+import ProductDetails from "./components/Products/ProductDetails";
 import Coupons from "./components/Coupons/Coupons";
+import CouponDetails from "./components/Coupons/CouponDetails";
 import Orders from "./components/Orders/Orders";
-import UserAccount from "./components/userAccount/userAccount";
+
+import UserAccount from "./components/userAccount/userAccount.jsx";
 import UserGuest from "./components/userGuest/userGuest.jsx";
 
 import "../node_modules/flowbite/dist/flowbite.min.js";
@@ -61,16 +63,24 @@ let routes = createBrowserRouter([
         element: <Brands />,
       },
       {
+        path: "brands/:id",
+        element: <BrandDetails />,
+      },
+      {
         path: "products",
         element: <Products />,
       },
       {
         path: "products/:id",
-        element: <CategoryDetails />,
+        element: <ProductDetails />,
       },
       {
         path: "subcategory",
         element: <SubCategories />,
+      },
+      {
+        path: "coupons/:id",
+        element: <CouponDetails />,
       },
       {
         path: "coupons",
