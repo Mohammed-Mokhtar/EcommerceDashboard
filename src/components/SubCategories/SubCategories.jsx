@@ -10,6 +10,13 @@ const subCategorySchema = z.object({
     .string()
     .min(3, "name minimum length is 3 characters")
     .max(30, "name maximum length is 30 characters"),
+  category: z.string().min(1, "Category is required"),
+});
+const subCategorySchemaEdit = z.object({
+  name: z
+    .string()
+    .min(3, "name minimum length is 3 characters")
+    .max(30, "name maximum length is 30 characters"),
 });
 
 export default function SubCategories() {
@@ -39,7 +46,7 @@ export default function SubCategories() {
     formState: { errors: editErrors },
   } = useForm({
     defaultValues: { name: "" },
-    resolver: zodResolver(subCategorySchema),
+    resolver: zodResolver(subCategorySchemaEdit),
   });
 
   const getCategoryNameById = (id) => {
@@ -51,7 +58,6 @@ export default function SubCategories() {
     axios
       .get("https://nti-ecommerce.vercel.app/api/v1/subCategories")
       .then((res) => {
-        console.log(res.data.subCategories);
         setSubCategories(res.data.categories);
       })
       .catch((err) => {
@@ -197,7 +203,7 @@ export default function SubCategories() {
                     {...addRegister("category")}
                   >
                     <option value="">Select category</option>
-                    {categories.map((category) => (
+                    {categories?.map((category) => (
                       <option
                         key={category?._id || category?.id}
                         value={category?._id || category?.id}
@@ -345,7 +351,7 @@ export default function SubCategories() {
             </tr>
           </thead>
           <tbody>
-            {subCategories.map((subCategory) => {
+            {subCategories?.map((subCategory) => {
               const rowId = subCategory?._id || subCategory?.id;
               const categoryId = subCategory?.category;
               return (
