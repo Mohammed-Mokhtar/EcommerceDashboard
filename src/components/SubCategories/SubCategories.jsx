@@ -3,13 +3,13 @@ import axios from "axios";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import toast, { Toaster } from "react-hot-toast";
 
 const subCategorySchema = z.object({
   name: z
     .string()
     .min(3, "name minimum length is 3 characters")
     .max(30, "name maximum length is 30 characters"),
-  category: z.string().min(1, "please select a category"),
 });
 
 export default function SubCategories() {
@@ -38,25 +38,24 @@ export default function SubCategories() {
     setValue: setEditValue,
     formState: { errors: editErrors },
   } = useForm({
-    defaultValues: { name: "", category: "" },
+    defaultValues: { name: "" },
     resolver: zodResolver(subCategorySchema),
   });
 
-  const getCategoryNameById = (categoryId) => {
-    const category = categories.find(
-      (item) => (item?._id || item?.id) === categoryId,
-    );
-    return category?.name || categoryId || "Unknown";
+  const getCategoryNameById = (id) => {
+    const category = categories.find((cat) => cat._id === id);
+    return category?.name;
   };
 
   const getAllSubCategories = () => {
     axios
       .get("https://nti-ecommerce.vercel.app/api/v1/subCategories")
       .then((res) => {
-        setSubCategories(res?.data?.subCategories || []);
+        console.log(res.data.subCategories);
+        setSubCategories(res.data.categories);
       })
       .catch((err) => {
-        console.log(err.response?.data?.err || err.message);
+        toast.error(err.response?.data?.err || err.message);
       });
   };
 
@@ -64,10 +63,10 @@ export default function SubCategories() {
     axios
       .get("https://nti-ecommerce.vercel.app/api/v1/categories")
       .then((res) => {
-        setCategories(res?.data?.categories || []);
+        setCategories(res.data.categories);
       })
       .catch((err) => {
-        console.log(err.response?.data?.err || err.message);
+        toast.error(err.response?.data?.err || err.message);
       });
   };
 
@@ -80,7 +79,7 @@ export default function SubCategories() {
         getAllSubCategories();
       })
       .catch((err) => {
-        console.log(err.response?.data?.err || err.message);
+        toast.error(err.response?.data?.err || err.message);
       });
   };
 
@@ -94,7 +93,7 @@ export default function SubCategories() {
 
   const handleEditSubCategory = (data) => {
     if (!subCategoryEditId) return;
-
+    console.log(data);
     axios
       .put(
         `https://nti-ecommerce.vercel.app/api/v1/subCategories/${subCategoryEditId}`,
@@ -105,9 +104,10 @@ export default function SubCategories() {
         setSubCategoryEditId(null);
         setIsEditModalOpen(false);
         getAllSubCategories();
+        toast.success("Subcategory updated successfully");
       })
       .catch((err) => {
-        console.log(err.response?.data?.err || err.message);
+        toast.error(err.response?.data?.err || err.message);
       });
   };
 
@@ -122,9 +122,10 @@ export default function SubCategories() {
         setSubCategoryDeleteId(null);
         setIsDeleteModalOpen(false);
         getAllSubCategories();
+        toast.success("Subcategory deleted successfully");
       })
       .catch((err) => {
-        console.log(err.response?.data?.err || err.message);
+        toast.error(err.response?.data?.err || err.message);
       });
   };
 
@@ -135,6 +136,7 @@ export default function SubCategories() {
 
   return (
     <>
+      <Toaster position="top-center" reverseOrder={false} />
       <button
         onClick={() => setIsAddModalOpen(true)}
         className="text-white bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none ms-auto me-5 block mb-5 cursor-pointer"
@@ -229,6 +231,10 @@ export default function SubCategories() {
             </form>
           </div>
         </div>
+        <div
+          className="absolute top-0 left-0 bg-gray-900/80 w-full h-full -p10 -z-10"
+          onClick={() => setIsAddModalOpen(false)}
+        ></div>
       </div>
 
       <div
@@ -266,34 +272,6 @@ export default function SubCategories() {
                   {editErrors.name && (
                     <p className="mt-1 text-sm text-danger">
                       {editErrors.name.message}
-                    </p>
-                  )}
-                </div>
-                <div className="col-span-2">
-                  <label
-                    htmlFor="edit-sub-category"
-                    className="block mb-2.5 text-sm font-medium text-heading"
-                  >
-                    Parent category
-                  </label>
-                  <select
-                    id="edit-sub-category"
-                    className="block w-full bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand px-3 py-2.5 shadow-xs"
-                    {...editRegister("category")}
-                  >
-                    <option value="">Select category</option>
-                    {categories.map((category) => (
-                      <option
-                        key={category?._id || category?.id}
-                        value={category?._id || category?.id}
-                      >
-                        {category?.name}
-                      </option>
-                    ))}
-                  </select>
-                  {editErrors.category && (
-                    <p className="mt-1 text-sm text-danger">
-                      {editErrors.category.message}
                     </p>
                   )}
                 </div>
@@ -344,6 +322,10 @@ export default function SubCategories() {
             </div>
           </div>
         </div>
+        <div
+          className="absolute top-0 left-0 bg-gray-900/80 w-full h-full -p10 -z-10"
+          onClick={() => setIsDeleteModalOpen(false)}
+        ></div>
       </div>
 
       <div className="relative overflow-x-auto bg-neutral-primary-soft shadow-xs rounded-base border border-default">
@@ -356,9 +338,7 @@ export default function SubCategories() {
               <th scope="col" className="px-6 py-3 font-medium">
                 Parent category
               </th>
-              <th scope="col" className="px-6 py-3 font-medium">
-                Slug
-              </th>
+
               <th scope="col" className="px-6 py-3 font-medium text-right">
                 Actions
               </th>
@@ -374,12 +354,12 @@ export default function SubCategories() {
                   className="bg-neutral-primary-soft border-b border-default hover:bg-neutral-secondary-medium"
                 >
                   <td className="px-6 py-4 text-heading whitespace-nowrap">
-                    {subCategory?.name || "Unnamed"}
+                    {subCategory.name}
                   </td>
                   <td className="px-6 py-4">
                     {getCategoryNameById(categoryId)}
                   </td>
-                  <td className="px-6 py-4">{subCategory?.slug || "-"}</td>
+
                   <td className="px-6 py-4 text-right">
                     <button
                       type="button"
